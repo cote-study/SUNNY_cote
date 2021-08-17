@@ -1,0 +1,87 @@
+import java.util.*;
+
+class Solution {
+    static String[][] map;
+    static int[][] move= {{0,1}, {1,0}, {0, -1}, {-1, 0}};
+    static int[][] move2 = {{0,2},{2, 0}, {0, -2}, {-2, 0}, {1,1}, {-1, -1}, {-1, 1}, {1, -1}};
+    public static class Node{
+        int x;
+        int y;
+        
+        Node(int x, int y) {
+            this.x = x;
+            this.y = y;
+        }
+    }
+    public int[] solution(String[][] places) {
+        int[] answer = new int[places.length];
+        map = new String[5][5];
+        for(int i=0; i<5; i++) {
+            answer[i] = setmap(places[i]);
+        }
+        
+        return answer;
+    }
+    private static int setmap(String[] place) {
+        Queue<Node> queue = new LinkedList<>();
+        for(int i=0; i<5; i++) {
+            String[] str = place[i].split("");
+            for(int j=0; j<5; j++) {
+                map[i][j] = str[j];
+                if(str[j].equals("P")) {
+                    queue.offer(new Node(j, i));
+                }
+            }
+        }
+        boolean check = false;
+        
+        if(queue.isEmpty()) {
+            check = true;
+        }
+        while(!queue.isEmpty()) {
+            Node node = queue.poll();
+            check = checkrule(node.x, node.y);
+            if(!check) queue.clear();
+        }
+        if(check) return 1;
+        return 0;
+    }
+    
+    private static boolean checkrule(int x, int y) {
+        
+        //동서남북
+        int nx =0;
+        int ny = 0;
+        for(int i=0; i<move.length; i++) {
+            nx = x+move[i][0];
+            ny = y +move[i][1];
+            if(nx>=0 && nx <5 && ny>=0 && ny <5) {
+                if(map[ny][nx].equals("P")) {
+                    return false;
+                }
+            }
+        }
+        for(int i=0; i<move2.length; i++) {
+            // System.out.println("y: " +y+"  x: " +x + "  i:" + i);
+            nx = x+move2[i][0];
+            ny = y +move2[i][1];
+            if(nx>=0 && nx <5 && ny>=0 && ny <5) {
+                // System.out.println("map: " + map[ny][nx]);
+                if(map[ny][nx].equals("P") && i<=3) {
+                    int midx = x+move2[i][0]/2;
+                    int midy = y+move2[i][1]/2;
+                    if(map[midy][midx].equals("O")) {
+                        return false;
+                    }
+                } 
+                if(map[ny][nx].equals("P") && i>3) {
+                    if(map[y][nx].equals("O") ||map[ny][x].equals("O")  ) {
+                        return false;
+                    }
+                }
+            } 
+        }
+    
+        return true;
+    }
+}
