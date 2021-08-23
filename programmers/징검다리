@@ -1,0 +1,31 @@
+import java.util.*;
+
+class Solution {
+    public int solution(int distance, int[] rocks, int n) {
+        int answer = 0;
+        int low = 1;
+        int high = distance;
+        Arrays.sort(rocks);
+        while(high >= low) {
+            int start = 0;
+            int cnt = 0;
+            int mid = (high + low)/2;
+            for(int rock : rocks) {
+                if(rock - start < mid) {
+                    cnt ++;
+                } else {
+                    start = rock;
+                }
+            }
+            if(cnt > n) {
+                high = mid -1;
+            } else {
+                low = mid +1;
+                answer = Math.max(mid, answer);
+            }
+            
+        }
+        
+        return answer;
+    }
+}
