@@ -1,0 +1,191 @@
+import java.util.*;
+
+class Solution {
+    public static class Puzzle {
+        int x;
+        int y;
+        String movement;
+        Puzzle(int x, int y,String movement) {
+            this.movement = movement;
+            this.x =x;
+            this.y = y;
+        }
+    }
+    static ArrayList<Puzzle>[] list;
+    static int width;
+    static int height;
+    static boolean[][] visited;
+    static int[][] move = {{0,-1}, {1,0}, {0,1}, {-1, 0}};
+    static int count = 0;
+    static String remember = "";
+    public int solution(int[][] game_board, int[][] table) {
+        int answer = 0;
+        height = game_board.length;
+        width = game_board[0].length;
+        visited = new boolean[height][width];
+        int cnt = 0;
+        while(cnt <4) {
+            cnt++;
+            //1부터 6개 까지의 퍼즐 조각
+            list = new ArrayList[7];
+            for (int i=0; i<=6; i++) {
+                list[i] = new ArrayList<>();
+            }
+            visitedClear();
+            setTable(table);
+            visitedClear();
+            for(int i=0; i<height; i++) {
+                for(int j=0; j<width; j++) {
+                    if(game_board[i][j] == 0 && !visited[i][j]) {
+                        count = 0;
+                        bfsGame(i, j, game_board);
+                        for(int k=0; k<list[count].size(); k++) {
+                            Puzzle puz = list[count].get(k);
+                            if(compareTable(j, i, puz, game_board)) {
+                                answer += count;
+                                game_board[i][j] = 1;
+                                table = fillTwo(puz, table);
+                                game_board = fillTwo(j, i, puz, game_board);
+                                list[count].remove(k);
+                                break;
+                            }
+                        }
+
+                    }
+                }
+            }
+
+            table = rotate(table);
+        }
+        return answer;
+    }
+        private static int[][] fillTwo(Puzzle puz, int[][] table) {
+        int x= puz.x;
+        int y = puz.y;
+        table[y][x] = 0;
+        int change = 0;
+        for(int i=0; i<puz.movement.length(); i++) {
+            if(puz.movement.charAt(i) == '?') {
+                change = Integer.parseInt(String.valueOf(puz.movement.charAt(i+1)));
+                x = x+move[change][0];
+                y = y+move[change][1];
+                i++;
+                continue;
+            }
+            change = Integer.parseInt(String.valueOf(puz.movement.charAt(i)));
+            x = x+move[change][0];
+            y = y+move[change][1];
+            table[y][x] = 0;
+        }
+        return table;
+
+    }
+    private static int[][] fillTwo(int x, int y, Puzzle puz, int[][] table) {
+        int change = 0;
+        for(int i=0; i<puz.movement.length(); i++) {
+            if(puz.movement.charAt(i) == '?') {
+                change = Integer.parseInt(String.valueOf(puz.movement.charAt(i+1)));
+                x = x+move[change][0];
+                y = y+move[change][1];
+                i++;
+                continue;
+            }
+            change = Integer.parseInt(String.valueOf(puz.movement.charAt(i)));
+            x = x+move[change][0];
+            y = y+move[change][1];
+            table[y][x] = 1;
+        }
+        return table;
+
+    }
+    private static boolean compareTable(int x, int y, Puzzle puz, int[][] game_board) {
+        int change = 0;
+        for(int i=0; i<puz.movement.length(); i++) {
+            if(puz.movement.charAt(i) == '?') {
+                change = Integer.parseInt(String.valueOf(puz.movement.charAt(i+1)));
+                x = x+move[change][0];
+                y = y+move[change][1];
+                i++;
+                continue;
+            }
+            change = Integer.parseInt(String.valueOf(puz.movement.charAt(i)));
+            x = x+move[change][0];
+            y = y+move[change][1];
+
+            if(y<0 || y>=height || x<0 || x>=width) {
+                return false;
+            }
+            if(game_board[y][x] != 0) {
+                return false;
+            }
+        }
+        return true;
+    }
+    private static void visitedClear() {
+        for(boolean a[] : visited) {
+            Arrays.fill(a, false);
+        }
+    }
+    private static void bfsGame(int y, int x, int[][] table) {
+        if(!visited[y][x]) {
+            count++;
+            visited[y][x] = true;
+            for(int i=0; i<move.length; i++) {
+                int nx = x + move[i][0];
+                int ny = y + move[i][1];
+                if(ny<0 || ny>=height || nx<0 || nx>=width) {
+                    continue;
+                }
+                if(table[ny][nx] == 0 && !visited[ny][nx]){
+                    bfsGame(ny, nx, table);
+                }
+            }
+            return;
+        }
+    }
+    private static void setTable(int[][] table) {
+
+        for(int i=0; i<table.length; i++) {
+            for(int j=0; j<table[i].length; j++) {
+                if(table[i][j] == 1 && !visited[i][j]) {
+                    count = 0;
+                    remember = "";
+                    bfsTable(i, j, table);
+                    list[count].add(new Puzzle(j, i, remember));
+                }
+            }
+        }
+    }
+    private static int[][] rotate(int[][] puzzle) {
+        int[][] temp = new int[puzzle[0].length][puzzle.length];
+
+        for(int i=0; i<puzzle.length; i++) {
+            for(int j=0; j<puzzle[i].length; j++) {
+                temp[j][puzzle.length-1-i] = puzzle[i][j];
+            }
+        }
+        return temp;
+    }
+    private static void bfsTable(int y, int x, int[][] table) {
+        height = table.length;
+        width = table[0].length;
+        if(!visited[y][x]) {
+            count++;
+            visited[y][x] = true;
+            for(int i=0; i<move.length; i++) {
+                int nx = x + move[i][0];
+                int ny = y + move[i][1];
+                if(ny<0 || ny>=height || nx<0 || nx>=width || table[ny][nx] != 1) {
+                    continue;
+                }
+                if(table[ny][nx] == 1 && !visited[ny][nx]){
+                    remember = remember + i;
+                    bfsTable(ny, nx, table);
+                    remember = remember + "?" + (i+2)%4;
+                }
+            }
+            return;
+        }
+
+    }
+}
