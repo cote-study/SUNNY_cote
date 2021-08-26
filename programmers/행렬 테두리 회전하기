@@ -1,0 +1,65 @@
+import java.util.*;
+
+class Solution {
+    static int[][] map;
+    public int[] solution(int rows, int columns, int[][] queries) {
+        map = new int[rows+1][columns+1];
+        for(int i=1; i<=rows; i++) {
+            for(int j=1; j<=columns; j++) {
+                map[i][j] = ((i-1)*columns + j);
+            }
+        }
+        
+        int[] answer = new int[queries.length];
+        //2254 y1x1y2x2
+        for(int i=0; i<queries.length; i++) {
+            ArrayList<Integer> list = new ArrayList<>();
+            int y1 = queries[i][0];
+            int x1 = queries[i][1];
+            int y2 = queries[i][2];
+            int x2 = queries[i][3];
+            int next = map[y1][x2];
+            
+            for(int j=1; j<=(x2-x1); j++) {
+               map[y1][x2-j+1] = map[y1][x2-j]; 
+                list.add(map[y1][x2-j]);
+            }
+            int temp = 0;
+            temp = map[y2][x2];
+            for(int j=1; j<=(y2-y1); j++) {
+                if(j == (y2-y1)) {
+                    map[y2-j+1][x2] = next;
+                    list.add(next);
+                } else {
+                    map[y2-j+1][x2] = map[y2-j][x2];
+                    list.add(map[y2-j][x2]);
+                }                                
+            }
+            next = temp;
+            temp = map[y2][x1];
+            for(int j=1; j<=(x2-x1); j++) {
+                if(j == (x2-x1)) {
+                    map[y2][x1+j-1] = next;
+                    list.add(next);
+                } else {
+                    map[y2][x1+j-1] = map[y2][x1+j];
+                    list.add(map[y2][x1+j]);
+                }                                
+            }
+            next = temp;
+            for(int j=1; j<=(y2-y1); j++) {
+                if(j == (y2-y1)) {
+                    map[y1+j-1][x1] = next;
+                    list.add(next);
+                } else {
+                    map[y1+j-1][x1] = map[y1+j][x1];
+                    list.add(map[y1+j][x1]);
+                }                                
+            }
+            Collections.sort(list);
+            answer[i] = list.get(0);           
+        }
+
+        return answer;
+    }
+}
