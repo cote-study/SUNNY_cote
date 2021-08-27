@@ -1,0 +1,32 @@
+package coding;
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+
+public class BJ1463 {
+    static int answer = Integer.MAX_VALUE;
+    public static void main(String[] args) throws Exception {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        int N = Integer.parseInt(br.readLine());
+        dfs(N, 0);
+        System.out.println(answer);
+    }
+    private static void dfs(int N, int count) {
+        if(N == 1) {
+            if(answer>=count) {
+                answer = count;
+            }
+            return;
+        }
+        if(count > answer) return;
+        if(N%3 == 0) {
+
+            dfs(N/3, count+1);
+        }
+        if(N%2 == 0) {
+            dfs(N/2, count+1);
+        }
+        dfs(N-1, count+1);
+    }
+
+}
