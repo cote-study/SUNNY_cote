@@ -1,0 +1,117 @@
+package coding;
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.util.*;
+
+public class BJ20055 {
+    private static class Belt{
+        int durability;
+        boolean robot;
+
+        Belt(int d, boolean r) {
+            this.durability = d;
+
+            this.robot = r;
+        }
+    }
+    private static ArrayList<Belt> list;
+    private static int N;
+    private static int K;
+    public static void main(String[] args) throws Exception{
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st = new StringTokenizer(br.readLine());
+        N = Integer.parseInt(st.nextToken());
+        K = Integer.parseInt(st.nextToken());
+        st = new StringTokenizer(br.readLine());
+        list = new ArrayList<>();
+        for(int i=1; i<=2*N; i++) {
+            int durability = Integer.parseInt(st.nextToken());
+            list.add(new Belt(durability, false));
+        }
+        int answer = 0;
+        while(true) {
+            System.out.println("----start-----");
+            printList();
+            answer ++;
+            rotationBelt();
+            System.out.println("rotate");
+            printList();
+            moveRobot();
+            System.out.println("moverobot");
+            printList();
+            setRobot();
+            System.out.println("setrobot");
+            printList();
+            int cnt = zeroPoint();
+            if(cnt >=K) break;
+//            System.out.println(answer);
+
+        }
+        System.out.println(answer);
+
+    }
+    private static void rotationBelt() {
+        Belt next = list.get(2*N-1);
+        for(int i=2*N-1; i>=0; i--) {
+            if(i==0) {
+                list.set(0, next);
+            }else if(i == N-1) {
+                Belt belt = list.get(i-1);
+
+                belt.robot = false;
+
+                list.set(i, belt);
+            } else {
+                Belt belt = list.get(i-1);
+
+                list.set(i, belt);
+            }
+        }
+    }
+
+    private static void moveRobot() {
+
+        for(int i=N-1; i>0; i--) {
+            if(list.get(i).durability >0 && list.get(i-1).robot && !list.get(i).robot) {
+                Belt belt = list.get(i);
+                belt.durability --;
+                if(i == N-1) {
+                    belt.robot = false;
+                } else {
+                    belt.robot = true;
+                }
+
+                list.set(i, belt);
+                belt = list.get(i-1);
+                belt.robot = false;
+                list.set(i-1, belt);
+            }
+        }
+    }
+
+    private static void setRobot() {
+        if(list.get(0).durability >0) {
+            Belt belt = list.get(0);
+            belt.robot = true;
+            belt.durability --;
+            list.set(0, belt);
+        }
+    }
+    private static int zeroPoint() {
+        int count = 0;
+        for(Belt belt : list) {
+            if(belt.durability == 0){
+                count++;
+            }
+        }
+        return count;
+    }
+    private static void printList() {
+        System.out.println("----------------------------------------");
+        for(int i=0; i<list.size(); i++) {
+            System.out.println("i: " + i +"  robot: " + list.get(i).robot + "  dura:  " + list.get(i).durability );
+        }
+    }
+
+}
