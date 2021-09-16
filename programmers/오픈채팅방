@@ -1,0 +1,43 @@
+import java.util.*;
+
+class Solution {
+    private static class Result{
+        String method;
+        String id;
+        
+        Result(String m, String id) {
+            this.method = m;
+            this.id = id;
+        }
+    }
+    public String[] solution(String[] record) {
+        ArrayList<Result> list = new ArrayList<>();
+        HashMap<String, String> map = new HashMap<>();
+        for(String line: record) {
+            String[] info = line.split(" ");
+            switch(line.charAt(0)) {
+                case 'L': 
+                    list.add(new Result("L", info[1]));
+                    break;
+                case 'E': 
+                    list.add(new Result("E", info[1]));
+                    map.put(info[1], info[2]);
+                    break;
+                case 'C': 
+                    map.put(info[1], info[2]);
+                    break;
+            }
+        }
+        String[] answer = new String[list.size()];
+        for(int i=0; i<list.size(); i++) {
+            Result result = list.get(i);
+            if(result.method.equals("E")) {
+                answer[i] = map.get(result.id) +"님이 들어왔습니다.";
+            } else {
+                answer[i] = map.get(result.id) +"님이 나갔습니다.";
+            }
+            
+        }
+        return answer;
+    }
+}
