@@ -1,0 +1,48 @@
+import java.util.*;
+
+class Solution {
+
+    private static boolean[][] visited;
+    private static int count =0;
+    private static int M = 0;
+    private static int N = 0;
+    private static int[][] pictures;
+    public int[] solution(int m, int n, int[][] picture) {
+        int numberOfArea = 0;
+        int maxSizeOfOneArea = 0;
+        visited = new boolean[m][n];
+        M = m;
+        N = n;
+        pictures = picture;
+        for(int i=0; i<m; i++) {
+            for(int j=0; j<n; j++) {
+                if(picture[i][j] != 0 && !visited[i][j]) {
+                    count = 0;
+                    checkSize(i, j, picture[i][j]);
+                    numberOfArea++;
+                    if(count >= maxSizeOfOneArea) {
+                        maxSizeOfOneArea = count;
+                    }
+                }
+            }
+        }
+        int[] answer = new int[2];
+        answer[0] = numberOfArea;
+        answer[1] = maxSizeOfOneArea;
+        return answer;
+    }
+    private static void checkSize(int y, int x, int num) {
+        if(x< 0 || x>=N || y <0 || y>= M) {
+            return;
+        }
+        if(!visited[y][x] && pictures[y][x] == num) {
+            visited[y][x] = true;
+            count++;
+            checkSize(y+1, x, num);
+            checkSize(y-1, x, num);
+            checkSize(y, x-1, num);
+            checkSize(y, x+1, num);
+            return;
+        }
+    }
+}
