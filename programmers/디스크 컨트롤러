@@ -1,0 +1,77 @@
+import java.util.*;
+
+class Solution {
+    private static class Order{
+        int start;
+        int end;
+        int times;
+        int num;
+        
+        Order(int s, int e, int t, int n) {
+            this.start = s;
+            this.end = e;
+            this.times = t;
+            this.num = n;
+        }        
+    }
+    
+    public int solution(int[][] jobs) {
+        int answer = 0;
+        int count = 0;
+        boolean[] visited = new boolean[jobs.length];
+         // 작업의 요청들을 작업 시작순으로 정렬
+        Arrays.sort(jobs, new Comparator<int[]>() {
+            @Override
+            public int compare(int[] a, int[] b) {
+                if(a[0] == b[0]) {
+                    return a[1] - b[1];
+                }
+                return a[0] - b[0];
+            }
+        });
+        //작업시간이 짧은거 우선
+        PriorityQueue<Order> pq = new PriorityQueue<>(new Comparator<Order>() {
+            @Override
+            public int compare(Order a, Order b) {
+                return (a.end) - (b.end);
+            }
+        });
+       
+        for(int i=0; i<jobs.length; i++) {
+            if(jobs[i][0] == jobs[0][0]) {
+                pq.offer(new Order(jobs[i][0], jobs[i][1], jobs[0][0], i));
+            }
+            
+        }
+        
+        int time = jobs[0][0];
+        while(count < jobs.length) {
+            count++;
+             // System.out.println("time: " + time + "  answer: " + answer);
+            if(!pq.isEmpty()) {
+                Order order = pq.poll();
+                // System.out.println("order.num: " + order.num+ "  order.start: " + order.start + "   order.end: " +  order.end + " number: " + (order.times - order.start + order.end));
+                answer += (order.times - order.start + order.end);
+                time += order.end;
+                order.times = time;
+                visited[order.num] = true;
+                pq.clear();
+                 for(int i=0; i<jobs.length; i++) {
+                    if(jobs[i][0] <= time && !visited[i])
+                    pq.offer(new Order(jobs[i][0], jobs[i][1], time, i));
+                    }
+            } else {
+                count --;
+                for(int i=0; i<jobs.length; i++) {
+                    if(!visited[i]) {
+                        time = jobs[i][0]; 
+                        pq.offer(new Order(jobs[i][0], jobs[i][1], time, i));
+                        break;
+                    }   
+                }
+            }           
+            }
+
+        return answer /= jobs.length;
+    }
+}
