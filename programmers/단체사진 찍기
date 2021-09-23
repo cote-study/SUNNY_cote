@@ -1,0 +1,65 @@
+import java.util.*;
+
+class Solution {
+    private static String[] order = {"A", "C", "F", "J", "M", "N", "R", "T"};
+    private static boolean[] visited;
+    private static String[] output;
+    private static int count;
+    public int solution(int n, String[] data) {
+        int answer = 0;
+        count = 0;
+        visited = new boolean[order.length];
+        output = new String[order.length];
+        picture(0, data);
+        answer = count;
+        return answer;
+    }
+    
+    private static boolean check(String out, String[] data) {
+        int indexFirst = 0;
+        int indexSecond = 0;
+        int distance = 0;
+        for(int i=0; i<data.length; i++) {
+                
+            char a = data[i].charAt(0);
+            indexFirst = out.indexOf(a);
+            char b = data[i].charAt(2);
+            indexSecond = out.indexOf(b);
+            char comp = data[i].charAt(3);
+            int number = Character.getNumericValue(data[i].charAt(4));
+            distance = Math.abs(indexFirst - indexSecond) -1;
+            if(comp == '=') {
+                if(distance != number) return false; 
+            } else if(comp == '>') {
+                if(distance <= number) return false;
+            } else if(comp == '<') {
+                if(distance >= number) return false;
+            }
+            }
+        return true;
+    }
+    
+    private static void picture(int depth, String[] data) {
+        if(depth == 8) {
+            StringBuilder sb = new StringBuilder();
+            for(String str : output) {
+                sb.append(str);
+            }
+            String out = sb.toString();
+            if(check(out, data)) {
+               count++; 
+            }
+            
+            return;
+        }
+        
+        for(int i= 0; i<order.length; i++) {
+            if(!visited[i]) {
+                visited[i] = true;
+                output[depth] = order[i];
+                picture(depth+1, data);
+                visited[i] = false;
+            }
+        }
+    }
+}
