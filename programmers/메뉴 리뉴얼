@@ -25,7 +25,7 @@ class Solution {
             }
 
             }
-            // System.out.println("len: " + course[j]);
+
             int maxValue = 0;
             for(String str: map.keySet()) {
                 // System.out.println("key: " + str + " value: " + map.get(str));
