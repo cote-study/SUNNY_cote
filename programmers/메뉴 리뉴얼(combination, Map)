@@ -1,0 +1,77 @@
+import java.util.*;
+
+class Solution {
+    private static char[][] order;
+    private static Map<String, Integer> map;
+    private static char[] output;
+    private static boolean[] visited = new boolean[10];
+    public String[] solution(String[] orders, int[] course) {
+        //순서는 중요하지않고, 주문
+        //course에서 가장 높은 수를 갖는 주문을 가져오기
+        ArrayList<String> list = new ArrayList<>();
+        order = new char[orders.length][10];      
+        for(int j=0; j<course.length; j++) {
+            map = new HashMap<>();
+            output = new char[course[j]];
+            
+            for(int i=0; i<orders.length; i++) {
+            order[i] = orders[i].toCharArray(); 
+
+            if(orders[i].length() >= course[j]) {
+                Arrays.fill(visited, false);
+                Arrays.fill(output, ' ');
+                Arrays.sort(order[i]);
+                combination(order[i], course[j], 0,0);
+            }
+
+            }
+            // System.out.println("len: " + course[j]);
+            int maxValue = 0;
+            for(String str: map.keySet()) {
+                // System.out.println("key: " + str + " value: " + map.get(str));
+                maxValue = Math.max(maxValue, map.get(str));
+            }
+            // System.out.println("max: " + maxValue);
+            if(maxValue >=2) {
+                for(String str: map.keySet()) {
+                    if(map.get(str) == maxValue){
+                        list.add(str);
+                    }
+                }
+            }          
+        }
+        
+        Collections.sort(list);
+        String[] answer = new String[list.size()];
+        for(int i=0; i<list.size(); i++) {
+            answer[i] = list.get(i);
+        }
+        
+        return answer;
+    }
+    private static void combination(char[] order, int len, int depth, int start) {
+        if(depth == len) {
+            String out = "";
+            for(char ch : output){
+                out +=ch;
+            }
+            if(map.containsKey(out)) {
+                int temp = map.get(out);
+                map.put(out, temp+1);
+            } else {
+                map.put(out, 1);
+            }
+
+            return;
+        }
+        
+        for(int i= start; i<order.length; i++) {
+            if(!visited[i]) {
+                visited[i] = true;
+                output[depth] = order[i];
+                combination(order, len, depth+1, i+1);
+                visited[i] = false;
+            }
+        }
+    }
+}
