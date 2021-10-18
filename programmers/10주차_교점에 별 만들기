@@ -1,0 +1,85 @@
+import java.util.*;
+
+class Solution {
+    private static class Node {
+        int x;
+        int y;
+        
+        Node(int x, int y) {
+            this.x = x;
+            this.y = y;
+        }
+    }
+    public String[] solution(int[][] line) {
+        int xMin = Integer.MAX_VALUE;
+        int yMin = Integer.MAX_VALUE;
+        int xMax = Integer.MIN_VALUE;
+        int yMax = Integer.MIN_VALUE;
+        LinkedList<Node> list = new LinkedList<>();
+        for(int i=0; i<line.length; i++) {
+            for(int j=i+1; j<line.length; j++) {
+                if(i != j) {
+                    int[] result = cross(line[i], line[j]);
+                    Node now = new Node(result[0], result[1]);
+                    if(result[0]== 100009 || list.contains(now)) continue;
+                    list.add(now);
+                    xMin = Math.min(result[0], xMin);
+                    yMin = Math.min(result[1], yMin);
+                    xMax = Math.max(result[0], xMax);
+                    yMax = Math.max(result[1], yMax);
+                }
+            }
+        }
+
+        int len = yMax - yMin +1;
+        int xlen = xMax - xMin +1;
+        char[][] map = new char[len][xlen];
+        for(int i=0; i<map.length; i++) {
+            Arrays.fill(map[i], '.');
+        }
+
+        String[] answer = new String[len];
+        if(yMax == yMin && xMin == xMax) {
+            answer[0] = "*";
+        } else {
+            for(int i=0; i<list.size(); i++) {
+                Node now = list.get(i);
+                now.x -= xMin;
+                now.y -= yMin;
+                if(yMin == yMax) {
+                    now.y = 0;
+                }
+                if(xMin == xMax) {
+                    now.x = 0;
+                }
+                map[(int) now.y][(int) now.x] = '*';
+            }
+            StringBuilder sb = new StringBuilder();
+            for(int i=0; i<map.length; i++) {
+                sb.append(map[i]);
+                answer[map.length-1-i] = sb.toString();
+                sb.setLength(0);
+            }
+
+        }
+        return answer;
+    }
+    private static int[] cross(int[] one, int[] two) {
+        int[] result = new int[2];
+        long A = (long) one[0];
+        long B = (long) one[1];
+        long E = (long) one[2];
+        
+        long C = (long) two[0];
+        long D = (long) two[1];
+        long F = (long) two[2];
+        if((A*D-B*C) !=0 && (((B*F - E*D)%(A*D-B*C)) == 0.0) && (((E*C - A*F)%(A*D-B*C)) == 0.0)) {
+            result[0] = (int) ((B*F - E*D)/(A*D-B*C));
+            result[1] = (int) ((E*C - A*F)/(A*D-B*C));
+        } else {
+            result[0] = 100009;
+        }
+        return result;
+
+    }
+}
