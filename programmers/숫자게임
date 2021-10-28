@@ -1,0 +1,40 @@
+import java.util.*;
+
+class Solution {
+    public int solution(int[] A, int[] B) {
+        int answer = 0;
+        Arrays.sort(B);
+        boolean[] visited = new boolean[B.length];
+        for(int i=0; i<A.length; i++) {
+            int left = 0;
+            int right = B.length-1;
+            while(left<right) {
+                int mid = (left+right)/2;
+                if(B[mid]>A[i]) {
+                    right = mid;
+                } else {
+                    left = mid+1;
+                }
+            }
+            if(B[right]>A[i]) {
+              if(!visited[right]) {
+                answer++;
+                visited[right] = true;
+            } else {
+                while(right <B.length-1) {
+                    right++;
+                    if(!visited[right]) {
+                        answer++;
+                        visited[right] = true;
+                        break;
+                    }
+                }
+            }  
+            }
+            
+            // System.out.println(right);
+        }
+        
+        return answer;
+    }
+}
