@@ -1,0 +1,53 @@
+import java.util.*;
+
+class Solution {
+    private static boolean[][][] map = new boolean[11][11][4];
+    private static int[][] move = {{1, 0}, {0, 1}, {-1, 0}, {0, -1}};
+    private static int x = 5;
+    private static int y = 5;
+    public int solution(String dirs) {
+        //시작: 5,5 범위는 0부터 10포함
+        int answer = 0;
+        char[] directions = dirs.toCharArray();
+        for(char move: directions) {
+            switch (move) {
+                case 'U':
+                    if(!inArea(x,y+1)) continue;
+                    answer += Go(0, x, y);
+                    break;
+                case 'D':
+                    if(!inArea(x,y-1)) continue;
+                    answer += Go(2, x, y);
+                    break;
+                case 'R':
+                    if(!inArea(x+1,y)) continue;
+                    answer += Go(1, x, y);
+                    break;
+                case 'L':
+                    if(!inArea(x-1,y)) continue;
+                    answer += Go(3, x, y);
+                    break;
+            }
+        }
+        return answer;
+    }
+    private static boolean inArea(int x, int y) {
+        if(x>=0 && x<11 && y>=0 && y<11) return true;
+        return false;
+
+    }
+    private static int Go(int direct, int nowX, int nowY) {
+        x = nowX + move[direct][1];
+        y = nowY + move[direct][0];
+
+        if(map[nowY][nowX][direct] || map[y][x][(direct+2)%4]) {
+            map[nowY][nowX][direct] =true;
+            map[y][x][(direct+2)%4] = true;
+            return 0;
+        }
+        map[nowY][nowX][direct] =true;
+        map[y][x][(direct+2)%4] = true;
+        // System.out.println("dir: " + direct + "  now: " + nowX + " nowy: " + nowY);
+        return 1;
+    }
+}
