@@ -1,0 +1,35 @@
+import java.util.*;
+
+class Solution {
+    public int[] solution(int n, String[] words) {
+        int[] answer = new int [2];
+        int count = 0;
+        boolean check = false;
+        ArrayList<String> list = new ArrayList<>();
+        for(String word: words) {
+            if(list.contains(word)) {
+                count++;
+                check = true;
+                break;
+            } else if(count !=0 && list.get(count-1).charAt(list.get(count-1).length()-1) != word.charAt(0)){
+                count++;
+                check = true;    
+                break;
+            } else {
+                list.add(word);
+                count++;
+            }
+        }
+        if(check) {
+            answer[0] = (count-1)%n +1;
+            if(count%n == 0) {
+               answer[1] = count/n; 
+            } else {
+                answer[1] = count/n +1;
+            }
+              
+        }
+        
+        return answer;
+    }
+}
