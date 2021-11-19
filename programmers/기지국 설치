@@ -1,0 +1,68 @@
+import java.util.*;
+
+class Solution {
+    public int solution(int n, int[] stations, int w) {
+        int answer = 0;
+//         ArrayList<Integer> list = new ArrayList<>();
+        
+//         if(stations[0] - w > 1) {
+//             list.add(stations[0] - w -1);
+//         }
+//         int start = stations[0] + w + 1;
+//         for(int i=1; i<stations.length; i++) {
+//             int end = stations[i] - w;
+//             if(start <= end) {
+//                 list.add(end - start);
+//             }
+//             start = stations[i] + w + 1;
+//         }
+//         if(start <= n) {
+//             list.add(n + 1 - start);
+//         }
+
+//         w = w*2 +1;
+//         for(int len: list) {
+//             if(len%w == 0) {
+//                 answer += len/w;
+//             } else {
+//                 answer += len/w +1;
+//             }
+//         }
+
+        
+        int start = 0;
+        int end = 0;
+        int len = 0;
+        if(stations[0] -w > 1) {
+            len = stations[0] - w - 1;
+            if(len%(w*2 +1) == 0) {
+                answer += len/(w*2 +1);
+            } else {
+                answer += len/(w*2 +1) +1;
+            }
+        }
+        start = stations[0] + w +1;
+        
+        for(int i=1; i<stations.length; i++) {
+            end = stations[i] - w;
+            if(start <= end) {
+                len = end - start;
+                if(len%(w*2 +1) == 0) {
+                    answer += len/(w*2 +1);
+                } else {
+                    answer += len/(w*2 +1) +1;
+                }
+            }
+            start = stations[i] + w +1;
+        }
+        if(start <=n) {
+            len = (n+1 - start);
+            if(len%(w*2 +1) == 0) {
+                answer += len/(w*2 +1);
+            } else {
+                answer += len/(w*2 +1) +1;
+            }
+        }
+        return answer;
+    }
+}
