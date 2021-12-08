@@ -1,0 +1,32 @@
+package coding.DP;
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.util.Arrays;
+
+public class BJ9084 {
+    public static void main(String[] args) throws Exception{
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        int T = Integer.parseInt(br.readLine());
+        StringBuilder sb = new StringBuilder();
+        System.out.println(sb.toString());
+        for(int i=0; i<T; i++) {
+            int N = Integer.parseInt(br.readLine());
+            int[] coins = Arrays.stream(br.readLine().split(" ")).mapToInt(Integer::parseInt).toArray();
+            int M = Integer.parseInt(br.readLine());
+
+            int[] dp = new int[M+1];
+            dp[0] = 1;
+            for(int coin: coins) {
+                for(int j=coin; j<=M; j++) {
+                    dp[j] += dp[j-coin];
+                }
+            }
+            sb.append(dp[M]).append("\n");
+        }
+        System.out.println(sb.toString());
+
+
+    }
+
+}
